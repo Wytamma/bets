@@ -1,0 +1,39 @@
+# Note that we use `threads` here as SLURM `--cpus-per-task`.
+reason: True
+show-failed-logs: True
+keep-going: True
+printshellcmds: True
+rerun-incomplete: True
+# Cluster submission
+jobname: "{rule}.{jobid}"              # Provide a custom name for the jobscript that is submitted to the cluster.
+max-jobs-per-second: 1                 #Maximal number of cluster/drmaa jobs per second, default is 10, fractions allowed.
+max-status-checks-per-second: 10       #Maximal number of job status checks per second, default is 10
+jobs: 50                              #Use at most N CPU cluster/cloud jobs in parallel.
+cluster: >-
+  sbatch --parsable --output=jobs/{rule}/slurm_%x_%j.out
+  --error=jobs/{rule}/slurm_%x_%j.log
+  --mem={resources.mem_mb}
+  --time={resources.runtime}
+  -N {resources.nodes}
+  -n {resources.tasks_per_node}
+  -c {threads}
+  $(if [[ '{resources.qos}' ]]; then echo '-q {resources.qos}'; fi)
+  $(if [[ '{resources.gres}' ]]; then echo '--gres={resources.gres}'; fi)
+  $(if [[ '{resources.account}' ]]; then echo '-A {resources.account}'; fi)
+  $(if [[ '{resources.partition}' ]]; then echo '-p {resources.partition}'; fi)
+  {resources.extra}
+cluster-cancel: scancel
+default-resources:
+  - account=''
+  - partition=''
+  - runtime=15
+  - mem_mb='1G'
+  - nodes=1
+  - tasks_per_node=1
+  - qos='covid19'
+  - gres=''
+  - extra=''
+use-conda: true
+use-envmodules: true
+local-cores: 1
+latency-wait: 30

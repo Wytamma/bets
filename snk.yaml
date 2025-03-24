@@ -1,0 +1,29 @@
+additional_snakemake_args: []
+cli:
+  alignment:
+    help: The alignment to run the analysis on
+    required: true
+    type: path
+  beast:
+    constant_site_weights:
+      help: Count of constant sites in order "A C G T" e.g "1243080 1276344 1272356 1240032"
+      required: true
+      type: str
+  out:
+    help: The output folder
+    type: path
+commands:
+- run
+- script
+- env
+- profile
+- info
+- config
+conda: true
+font: small
+logo: BETS 
+resources: []
+skip_missing: false
+symlink_resources: false
+tagline: A Snakemake workflow CLI generated with Snk
+version: 0.1.0
